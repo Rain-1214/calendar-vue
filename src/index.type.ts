@@ -30,7 +30,7 @@ export interface IDateTableData {
 export interface ISelectDate {
   year: number;
   month: number;
-  day: number;
+  day?: number;
 }
 
 export interface IChineseEra {

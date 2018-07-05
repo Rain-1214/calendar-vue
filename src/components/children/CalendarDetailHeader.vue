@@ -1,21 +1,21 @@
 <template>
-  <div className="calendar-header">
+  <div class="calendar-header">
     <div>
-      <Dropdown :value="currentYear" :listData="yearList" :maxHeight="200" />  
+      <Dropdown :value="currentYear" :listData="yearList" :maxHeight="200" @updateValue="receiveDate('year', $event)" />
     </div>
     <div>
-      <div className="icon prev" />
-      
-      <div className="icon next" />
+      <div class="icon prev" />
+      <Dropdown :value="currentMonth" :listData="monthList" :maxHeight="200" @updateValue="receiveDate('month', $event)"/>
+      <div class="icon next" />
     </div>
     <div>
-      <button className="btn">返回今日</button>
+      <button class="btn" @click="returnToday">返回今日</button>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { IListData } from '@/index.type';
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator';
+import { IListData, ISelectDate } from '@/index.type';
 import Dropdown from '@/components/common/Dropdown.vue';
 import LunarCalendarDataService from '@/tool/LunarCalendar';
 
@@ -51,6 +51,38 @@ export default class CalendarDetailHeader extends Vue {
       });
     }
   }
+
+  public receiveDate(selectType: 'year' | 'month', selectValue: number) {
+    switch (selectType) {
+      case 'year':
+        this.currentYear = selectValue;
+        this.updateDate({ year: this.currentYear, month: this.currentMonth });
+        break;
+      case 'month':
+        this.currentMonth = selectValue;
+        this.updateDate({ year: this.currentYear, month: this.currentMonth });
+        break;
+    }
+  }
+
+  @Watch('year')
+  public watchYear() {
+    if (this.year !== this.currentYear) {
+      this.currentYear = this.year;
+    }
+  }
+
+  @Watch('month')
+  public watchMonth() {
+    if (this.month !== this.currentMonth) {
+      this.currentMonth = this.month;
+    }
+  }
+
+  @Emit('updateDate')
+  public updateDate(selectDate: ISelectDate) {}
+  @Emit('returnToday')
+  public returnToday() {}
 
 }
 

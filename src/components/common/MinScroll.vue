@@ -1,28 +1,30 @@
 <template>
-  <div class="min-scroll-bar-wrapper">
+  <div class="min-scroll-bar-wrapper" @mousewheel="onWheel($event)" @mouseup="endMove($event)" @mousedown="$event.stopPropagation()">
     <div class="scroll-wrapper"
-          :style="{
-            maxHeight: maxHeight + 'px',
-          }">
+         :style="{
+           maxHeight: maxHeight + 'px',
+         }">
         <div class="scroll-element"
              :style="{
-               top: scrollElementDistance
+               top: scrollElementDistance + 'px'
              }">
           <slot></slot>
         </div>
     </div>
-    <div class="scroll-bar">
+    <div class="scroll-bar" @click="clickScrollBar($event)">
       <div class="bar"
-            :style="{
-              top: scrollBarDistance
-            }" />
+           :style="{
+             top: scrollBarDistance + 'px'
+           }"
+           @click="$event.stopPropagation()"
+           @mousedown="startMove($event)"/>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-@Component({})
+@Component
 export default class MinScroll extends Vue {
 
   @Prop({ default: Number.MAX_SAFE_INTEGER }) public maxHeight!: number;
@@ -68,8 +70,71 @@ export default class MinScroll extends Vue {
   public scrollBarDistance: number = 0;
 
   public mounted() {
-    this.scrollWrapperRef = this.$el.querySelector('.scroll-element') as HTMLElement;
-    this.sourceHeight = this.scrollWrapperRef.clientHeight;
+    if (this.maxHeight !== Number.MAX_SAFE_INTEGER) {
+      this.scrollWrapperRef = this.$el.querySelector('.scroll-element') as HTMLElement;
+      this.sourceHeight = this.scrollWrapperRef.clientHeight;
+      this.maxScrollElementDistance = this.sourceHeight - this.maxHeight;
+      this.maxScrollBarDistance = this.maxHeight - this.scrollBarHeight;
+      document.addEventListener('mousemove', (event: MouseEvent) => {
+        event.preventDefault();
+        if (this.canMove) {
+          this.setScrollBarDistance(this.startMoveScrollDistance + (event.clientY - this.startMoveMouseDistance));
+        }
+      });
+      document.addEventListener('mouseup', (event: MouseEvent) => {
+        this.canMove = false;
+      });
+    }
+  }
+
+  public updated() {
+    const tempHeight = this.scrollWrapperRef.clientHeight;
+    if (this.maxHeight !== Number.MAX_SAFE_INTEGER && this.sourceHeight !== tempHeight && tempHeight !== 0) {
+      this.sourceHeight = this.scrollWrapperRef.clientHeight;
+      this.maxScrollElementDistance = this.sourceHeight - this.maxHeight;
+      this.maxScrollBarDistance = this.maxHeight - this.scrollBarHeight;
+      this.setScrollElementDistance(this.scrollElementDistance);
+    }
+  }
+
+  public onWheel(event: MouseWheelEvent) {
+    const step = event.deltaY > 0 ? -this.scrollStep : this.scrollStep;
+    this.setScrollElementDistance(step + this.scrollElementDistance);
+  }
+
+  public clickScrollBar(event: MouseEvent) {
+    const scrollDistance = event.offsetY - this.scrollBarHeight / 2;
+    this.setScrollBarDistance(scrollDistance);
+  }
+
+  public startMove(event: MouseEvent) {
+    event.stopPropagation();
+    this.startMoveMouseDistance = event.clientY;
+    this.startMoveScrollDistance = this.scrollBarDistance;
+    this.canMove = true;
+  }
+
+  public endMove(event: MouseEvent) {
+    event.stopPropagation();
+    this.canMove = false;
+  }
+
+  public setScrollElementDistance(scrollDistance: number) {
+    let currentScrollDistance = scrollDistance;
+    currentScrollDistance = currentScrollDistance < -this.maxScrollElementDistance ?
+                            -this.maxScrollElementDistance :
+                            currentScrollDistance > 0 ? 0 : currentScrollDistance;
+    this.scrollElementDistance = currentScrollDistance;
+    const scrollPercent = Math.abs(this.scrollElementDistance) / this.maxScrollElementDistance;
+    this.scrollBarDistance = scrollPercent * this.maxScrollBarDistance;
+  }
+
+  public setScrollBarDistance(scrollDistance: number) {
+    const currentScrollDistance = scrollDistance < 0 ? 0 :
+                                scrollDistance > this.maxScrollBarDistance ? this.maxScrollBarDistance : scrollDistance;
+    this.scrollBarDistance = currentScrollDistance;
+    const scrollPercent = Math.abs(this.scrollBarDistance) / this.maxScrollBarDistance;
+    this.scrollElementDistance = -(scrollPercent * this.maxScrollElementDistance);
   }
 
 }

@@ -2,7 +2,7 @@
   <div class="calendar-wrapper" :style="{ width: width + 'px' }">
     <div class="calendar-detail-wrapper">
       <div class="header">
-        <CalendarDetailHeader :year="year" :month="month" :returnToday="returnToday" />
+        <CalendarDetailHeader :year="year" :month="month" @returnToday="returnToday" @updateDate="receiveDate($event)" />
       </div>
       <div class="body">
         calendar-body
@@ -38,10 +38,6 @@ export default class Calendar extends Vue {
   public month!: number;
   public day!: number;
 
-  @Emit('receiveDate')
-  // tslint:disable-next-line:no-empty
-  public updateDate(selectDate: ISelectDate) {}
-
   public created() {
     this.year = this.defaultYear;
     this.month = this.defaultMonth;
@@ -54,6 +50,21 @@ export default class Calendar extends Vue {
     this.month = today.getMonth() + 1;
     this.day = today.getDate();
   }
+
+  public receiveDate(selectDate: ISelectDate) {
+    // tslint:disable-next-line:no-console
+    console.log(selectDate);
+    switch (true) {
+      case !!selectDate.day:
+        this.day = selectDate.day as number;
+      default:
+        this.year = selectDate.year;
+        this.month = selectDate.month;
+    }
+  }
+
+  @Emit('receiveDate')
+  public updateDate(selectDate: ISelectDate) {}
 
 }
 </script>

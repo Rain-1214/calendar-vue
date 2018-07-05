@@ -1,15 +1,15 @@
 <template>
-  <div class="dropdown-wrapper" :style="{width: width + 'px'}">
-    <div class="value">
+  <div class="dropdown-wrapper" :style="{width: width + 'px', display: display}" @mousedown="$event.stopPropagation()">
+    <div class="value" @mouseup="triggleShowListData($event)">
       {{ value }}
     </div>
-    <span class="dropdown-btn" >
+    <span class="dropdown-btn" @mouseup="triggleShowListData($event)">
       <i class="icon-down" />
     </span>
-    <div class="dropdown-list" :hidden="listVisible">
+    <div class="dropdown-list" :hidden="!listVisible">
       <MinScroll :maxHeight="maxHeight">
         <ul>
-          <li v-for="(v,i) in listData" :key="i">
+          <li v-for="(v,i) in listData" :key="i" @mouseup="selectValue(v)">
             {{ v.label }}
           </li>
         </ul>
@@ -19,9 +19,9 @@
 </template>
 <script lang="ts">
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import MinScroll from './MinScroll.vue';
+import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator';
 import { IListData } from '@/index.type';
+import MinScroll from './MinScroll.vue';
 
 @Component({
   components: {
@@ -30,24 +30,58 @@ import { IListData } from '@/index.type';
 })
 export default class Dropdown extends Vue {
 
-  @Prop({ default: 80 })
-  public width!: number;
-  @Prop({ default: Number.MAX_SAFE_INTEGER })
-  public maxHeight!: number;
-  @Prop({ default: 'inline-block' })
-  public display!: string;
-  @Prop({ required: true })
-  public listData!: IListData[];
-  @Prop({ default: true })
-  public globalClickClose!: boolean;
-  @Prop({ default: '待选择' })
-  public placeholder!: string;
+  @Prop({ default: 80 }) public width!: number;
+  @Prop({ default: Number.MAX_SAFE_INTEGER }) public maxHeight!: number;
+  @Prop({ default: 'inline-block' }) public display!: string;
+  @Prop({ required: true }) public listData!: IListData[];
+  @Prop({ default: true }) public globalClickClose!: boolean;
+  @Prop({ default: '待选择' }) public placeholder!: string;
+  @Prop({ type: [ String, Number ], required: true }) public value!: string | number;
 
-  @Prop() public defaultValue?: string | number | null;
-  @Prop() public updateValue?: (value: string | number | null) => void;
-
-  public value: string | number = this.defaultValue || this.placeholder;
+  public currentValue: string | number = this.value || this.placeholder;
   public listVisible: boolean = false;
+  public liHeight = 24;
+
+  public mounted(event: MouseEvent) {
+    if (this.globalClickClose) {
+      let canClose = false;
+      document.addEventListener('mousedown', () => {
+        canClose = true;
+      });
+      document.addEventListener('mouseup', () => {
+        if (canClose) {
+          canClose = false;
+          this.listVisible = false;
+        }
+      });
+    }
+  }
+
+  public triggleShowListData(event: MouseEvent) {
+    event.stopPropagation();
+    this.listVisible = !this.listVisible;
+    if (this.listVisible && this.currentValue) {
+      const scrollDistance = this.listData.findIndex((e) => e.value === this.currentValue) * this.liHeight;
+      console.log(scrollDistance);
+      (this.$children[0] as MinScroll).setScrollElementDistance(-scrollDistance || 0);
+    }
+  }
+
+  public selectValue(selectValue: IListData) {
+    this.currentValue = selectValue.value;
+    this.listVisible = false;
+    this.updateValue(selectValue.value);
+  }
+
+  @Watch('value')
+  public watchValue() {
+    if (this.value !== this.currentValue) {
+      this.currentValue = this.value;
+    }
+  }
+
+  @Emit('updateValue')
+  public updateValue(value: string | number) {}
 
 }
 

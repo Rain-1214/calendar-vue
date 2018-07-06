@@ -62,8 +62,9 @@ export default class Dropdown extends Vue {
     this.listVisible = !this.listVisible;
     if (this.listVisible && this.currentValue) {
       const scrollDistance = this.listData.findIndex((e) => e.value === this.currentValue) * this.liHeight;
-      console.log(scrollDistance);
-      (this.$children[0] as MinScroll).setScrollElementDistance(-scrollDistance || 0);
+      this.$nextTick(() => {
+        (this.$children[0] as MinScroll).setScrollElementDistance(-scrollDistance);
+      });
     }
   }
 

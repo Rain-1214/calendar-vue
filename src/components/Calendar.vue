@@ -2,69 +2,233 @@
   <div class="calendar-wrapper" :style="{ width: width + 'px' }">
     <div class="calendar-detail-wrapper">
       <div class="header">
-        <CalendarDetailHeader :year="year" :month="month" @returnToday="returnToday" @updateDate="receiveDate($event)" />
+        <CalendarDetailHeader :year="currentYear" :month="currentMonth" @returnToday="returnToday" @updateDate="receiveDate($event)" />
       </div>
       <div class="body">
-        calendar-body
+        <CalendarDetailBody :year="currentYear" :month="currentMonth" :day="currentDay" :scheduleIconColor="scheduleIconColor" 
+                            :schedules="tempSchedule" @updateDate="receiveDate($event)" />
       </div>
     </div>
     <div class="schedule-wrapper">
-      schedule
+      <Schedule :year="currentYear" :month="currentMonth" :day="currentDay" :schedule="tempSchedule" />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
+import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import { ISelectDate, IScheduleList } from '../index.type';
 import CalendarDetailHeader from './children/CalendarDetailHeader.vue';
+import CalendarDetailBody from './children/CalendarDetailBody.vue';
+import Schedule from './children/Schedule.vue';
 
 @Component({
   components: {
     CalendarDetailHeader,
+    CalendarDetailBody,
+    Schedule,
   },
 })
 export default class Calendar extends Vue {
 
-  @Prop({ default: new Date().getFullYear() }) public defaultYear!: number;
-  @Prop({ default: new Date().getMonth() }) public defaultMonth!: number;
-  @Prop({ default: new Date().getDate() }) public defaultDay!: number;
+  @Prop({ default: new Date().getFullYear() }) public year!: number;
+  @Prop({ default: new Date().getMonth() + 1 }) public month!: number;
+  @Prop({ default: new Date().getDate() }) public day!: number;
   @Prop({ default: () => [] }) public schedule!: IScheduleList[];
   @Prop({ default: '#f60'}) public scheduleIconColor!: string;
   @Prop({ default: false }) public showSchedule!: boolean;
   @Prop({ default: true }) public showToday!: boolean;
   @Prop({ default: 550 }) public width!: number;
 
-  public year!: number;
-  public month!: number;
-  public day!: number;
+  public currentYear: number = this.year;
+  public currentMonth: number = this.month;
+  public currentDay: number = this.day;
+  public tempSchedule: IScheduleList[] = [];
 
   public created() {
-    this.year = this.defaultYear;
-    this.month = this.defaultMonth;
-    this.day = this.defaultDay;
+    this.currentYear = this.year;
+    this.currentMonth = this.month;
+    this.currentDay = this.day;
+    this.tempSchedule = [
+      {
+        day: 22,
+        month: 7,
+        schedules: [
+          {
+            description: '吃饭',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+        ],
+        year: 2018,
+      },
+      {
+        day: 12,
+        month: 7,
+        schedules: [
+          {
+            description: '吃饭1',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉1',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+        ],
+        year: 2018,
+      },
+      {
+        day: 5,
+        month: 7,
+        schedules: [
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '吃饭2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+          {
+            description: '睡觉2',
+            endTime: '10:00',
+            iconColor: '#ff0000',
+            startTime: '9:00',
+          },
+        ],
+        year: 2018,
+      },
+    ];
   }
 
   public returnToday() {
     const today = new Date();
-    this.year = today.getFullYear();
-    this.month = today.getMonth() + 1;
-    this.day = today.getDate();
+    this.currentYear = today.getFullYear();
+    this.currentMonth = today.getMonth() + 1;
+    this.currentDay = today.getDate();
+    this.updateDate({ year: this.currentYear, month: this.currentMonth, day: this.currentDay });
   }
 
   public receiveDate(selectDate: ISelectDate) {
-    // tslint:disable-next-line:no-console
-    console.log(selectDate);
     switch (true) {
       case !!selectDate.day:
-        this.day = selectDate.day as number;
+        this.currentDay = selectDate.day as number;
       default:
-        this.year = selectDate.year;
-        this.month = selectDate.month;
+        this.currentYear = selectDate.year;
+        this.currentMonth = selectDate.month;
     }
+    this.updateDate({ year: this.currentYear, month: this.currentMonth, day: this.currentDay });
   }
 
   @Emit('receiveDate')
   public updateDate(selectDate: ISelectDate) {}
+
+  @Watch('year')
+  public watchYear() {
+    this.currentYear = this.year;
+  }
+
+  @Watch('month')
+  public watchMonth() {
+    this.currentMonth = this.month;
+  }
+
+  @Watch('day')
+  public watchDay() {
+    this.currentDay = this.day;
+  }
 
 }
 </script>

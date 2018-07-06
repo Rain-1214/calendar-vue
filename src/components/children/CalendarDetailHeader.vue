@@ -6,7 +6,7 @@
     <div>
       <div class="icon prev" />
       <Dropdown :value="currentMonth" :listData="monthList" :maxHeight="200" @updateValue="receiveDate('month', $event)"/>
-      <div class="icon next" />
+      <div class="icon next" @click="jump2nextMonth" />
     </div>
     <div>
       <button class="btn" @click="returnToday">返回今日</button>
@@ -63,6 +63,34 @@ export default class CalendarDetailHeader extends Vue {
         this.updateDate({ year: this.currentYear, month: this.currentMonth });
         break;
     }
+  }
+
+  public jump2prevMonth() {
+    const { startYear, endYear } = this.lunarCalendarDataService.getScopeOfLunarYear();
+    if (this.currentYear === startYear && this.month === 1) {
+      return;
+    }
+    if (this.currentMonth === 1) {
+      this.currentYear--;
+      this.currentMonth = 12;
+    } else {
+      this.currentMonth--;
+    }
+    this.updateDate({ year: this.currentYear, month: this.currentMonth });
+  }
+
+  public jump2nextMonth() {
+    const { startYear, endYear } = this.lunarCalendarDataService.getScopeOfLunarYear();
+    if (this.currentYear === endYear && this.month === 12) {
+      return;
+    }
+    if (this.currentMonth === 12) {
+      this.currentYear++;
+      this.currentMonth = 1;
+    } else {
+      this.currentMonth++;
+    }
+    this.updateDate({ year: this.currentYear, month: this.currentMonth });
   }
 
   @Watch('year')

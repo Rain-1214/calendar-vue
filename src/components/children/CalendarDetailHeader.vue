@@ -4,7 +4,7 @@
       <Dropdown :value="currentYear" :listData="yearList" :maxHeight="200" @updateValue="receiveDate('year', $event)" />
     </div>
     <div>
-      <div class="icon prev" />
+      <div class="icon prev" @click="jump2prevMonth" />
       <Dropdown :value="currentMonth" :listData="monthList" :maxHeight="200" @updateValue="receiveDate('month', $event)"/>
       <div class="icon next" @click="jump2nextMonth" />
     </div>

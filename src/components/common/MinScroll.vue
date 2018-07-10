@@ -1,5 +1,5 @@
 <template>
-  <div class="min-scroll-bar-wrapper" @mousewheel="onWheel($event)" @mouseup="endMove($event)" @mousedown="$event.stopPropagation()">
+  <div class="min-scroll-bar-wrapper" :class="{'hasScroll': sourceHeight > maxHeight}" @mousewheel="onWheel($event)" @mouseup="endMove($event)" @mousedown="$event.stopPropagation()">
     <div class="scroll-wrapper"
          :style="{
            maxHeight: maxHeight + 'px',
@@ -70,8 +70,8 @@ export default class MinScroll extends Vue {
   public scrollBarDistance: number = 0;
 
   public mounted() {
+    this.scrollWrapperRef = this.$el.querySelector('.scroll-element') as HTMLElement;
     if (this.maxHeight !== Number.MAX_SAFE_INTEGER) {
-      this.scrollWrapperRef = this.$el.querySelector('.scroll-element') as HTMLElement;
       this.sourceHeight = this.scrollWrapperRef.clientHeight;
       this.maxScrollElementDistance = this.sourceHeight - this.maxHeight;
       this.maxScrollBarDistance = this.maxHeight - this.scrollBarHeight;

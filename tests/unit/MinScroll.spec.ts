@@ -51,114 +51,102 @@ describe('MinScroll component test', () => {
     expect(bar.element.style.top).eq('0px');
   });
 
-  // it('component should set scroll distance when mouseWheel event called on ".min-scroll-bar-wrapper"', () => {
-  //   wrapper.setProps({
-  //     maxHeight: 200
-  //   });
-  //   (wrapper.instance() as MinScroll).sourceHeight = 1500;
-  //   (wrapper.instance() as MinScroll).maxScrollBarDistance = 170;
-  //   (wrapper.instance() as MinScroll).maxScrollElementDistance = 1300;
-  //   const scrollStep = 50;
-  //   const wrapperDiv = wrapper.find('.min-scroll-bar-wrapper');
-  //   wrapperDiv.simulate('wheel',{ deltaY: 10 });
-  //   let scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-scrollStep);
-  //   wrapperDiv.simulate('wheel',{ deltaY: 10 });
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-scrollStep * 2);
-  //   wrapperDiv.simulate('wheel',{ deltaY: -10 });
-  //   wrapperDiv.simulate('wheel',{ deltaY: -10 });
-  //   wrapperDiv.simulate('wheel',{ deltaY: -10 });
-  //   wrapperDiv.simulate('wheel',{ deltaY: -10 });
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(0);
-  //   for(let i = 0; i < 1300 / scrollStep; i ++) {
-  //     wrapperDiv.simulate('wheel',{ deltaY: 10 });
-  //   }
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-1300);
-  //   wrapperDiv.simulate('wheel',{ deltaY: 10 });
-  //   wrapperDiv.simulate('wheel',{ deltaY: 10 });
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-1300);
-  // });
+  it('component should set scroll distance when mouseWheel event called on ".min-scroll-bar-wrapper"', () => {
+    wrapper.setProps({
+      maxHeight: 200,
+    });
+    wrapper.setData({
+      sourceHeight: 1500,
+      maxScrollBarDistance: 170,
+      maxScrollElementDistance: 1300,
+    });
+    const scrollStep = 50;
+    const wrapperDiv = wrapper.find('.min-scroll-bar-wrapper');
+    wrapperDiv.trigger('mousewheel', { deltaY: 10 });
+    const scrollElementDiv = wrapper.find('.scroll-element');
+    expect(scrollElementDiv.element.style.top).eq(-scrollStep + 'px');
+
+    wrapperDiv.trigger('mousewheel', { deltaY: 10 });
+    expect(scrollElementDiv.element.style.top).eq(-scrollStep * 2 + 'px');
+
+    wrapperDiv.trigger('mousewheel', { deltaY: -10 });
+    wrapperDiv.trigger('mousewheel', { deltaY: -10 });
+    wrapperDiv.trigger('mousewheel', { deltaY: -10 });
+    wrapperDiv.trigger('mousewheel', { deltaY: -10 });
+    expect(scrollElementDiv.element.style.top).eq('0px');
+
+    for (let i = 0; i < 1300 / scrollStep; i ++) {
+      wrapperDiv.trigger('mousewheel', { deltaY: 10 });
+    }
+    expect(scrollElementDiv.element.style.top).eq('-1300px');
+
+    wrapperDiv.trigger('mousewheel', { deltaY: 10 });
+    wrapperDiv.trigger('mousewheel', { deltaY: 10 });
+    expect(scrollElementDiv.element.style.top).eq('-1300px');
+  });
 
 
-  // it('component should set scroll distance when click the "scroll-bar"', () => {
-  //   wrapper.setProps({
-  //     maxHeight: 200
-  //   });
-  //   (wrapper.instance() as MinScroll).sourceHeight = 1500;
-  //   (wrapper.instance() as MinScroll).maxScrollBarDistance = 170;
-  //   (wrapper.instance() as MinScroll).maxScrollElementDistance = 1300;
-  //   const scrollBar = wrapper.find('.scroll-bar');
-  //   scrollBar.simulate('click', { nativeEvent: { offsetY: 100 } });
-  //   let scrollElementDiv = wrapper.find('.scroll-element');
-  //   let bar = wrapper.find('.bar');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-((100 - 15) / 170 * 1300));
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(85);
-  //   scrollBar.simulate('click', { nativeEvent: { offsetY: 0 } });
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   bar = wrapper.find('.bar');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-0);
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(0);
-  //   scrollBar.simulate('click', { nativeEvent: { offsetY: 200 } });
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   bar = wrapper.find('.bar');
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-1300);
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(170);
-  // });
+  it('component should set scroll distance when click the "scroll-bar"', () => {
+    wrapper.setProps({
+      maxHeight: 200,
+    });
+    wrapper.setData({
+      sourceHeight: 1500,
+      maxScrollBarDistance: 170,
+      maxScrollElementDistance: 1300,
+    });
+    const scrollBar = wrapper.find('.scroll-bar');
+    scrollBar.trigger('click', { offsetY: 100  });
+    const scrollElementDiv = wrapper.find('.scroll-element');
+    const bar = wrapper.find('.bar');
+    expect(scrollElementDiv.element.style.top).eq(-((100 - 15) / 170 * 1300) + 'px');
+    expect(bar.element.style.top).eq('85px');
+
+    scrollBar.trigger('click', { offsetY: 0 } );
+    expect(scrollElementDiv.element.style.top).eq('0px');
+    expect(bar.element.style.top).eq('0px');
+
+    scrollBar.trigger('click', { offsetY: 200  });
+    expect(scrollElementDiv.element.style.top).eq('-1300px');
+    expect(bar.element.style.top).eq('170px');
+  });
 
 
-  // it('component should set scroll distance when drag the "bar"', () => {
-  //   wrapper.setProps({
-  //     maxHeight: 200
-  //   });
-  //   (wrapper.instance() as MinScroll).sourceHeight = 1500;
-  //   (wrapper.instance() as MinScroll).maxScrollBarDistance = 170;
-  //   (wrapper.instance() as MinScroll).maxScrollElementDistance = 1300;
-  //   let bar = wrapper.find('.bar');
-  //   bar.simulate('mousedown', {
-  //     // tslint:disable-next-line:no-empty
-  //     stopPropagation: () => {},
-  //     nativeEvent: {
-  //       clientY: 10,
-  //       // tslint:disable-next-line:no-empty
-  //       stopPropagation: () => {},
-  //       // tslint:disable-next-line:no-empty
-  //       stopImmediatePropagation: () => {}
-  //     }
-  //   });
+  it('component should set scroll distance when drag the "bar"', () => {
+    wrapper = shallowMount(MinScroll, {
+      propsData: {
+        maxHeight: 200,
+      },
+    });
+    wrapper.setData({
+      sourceHeight: 1500,
+      maxScrollBarDistance: 170,
+      maxScrollElementDistance: 1300,
+    });
+    const bar = wrapper.find('.bar');
+    bar.trigger('mousedown', {
+      stopPropagation: () => {},
+      clientY: 10,
+    });
 
-  //   document.dispatchEvent(new MouseEvent('mousemove', { clientY: 100 }));
-  //   wrapper.update();
-  //   bar = wrapper.find('.bar');
-  //   let scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(90);
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-(90 / 170 * 1300));
 
-  //   document.dispatchEvent(new MouseEvent('mousemove', { clientY: 500 }));
-  //   wrapper.update();
-  //   bar = wrapper.find('.bar');
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(170);
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-1300);
+    document.dispatchEvent(new MouseEvent('mousemove', { clientY: 100, preventDefault: () => {} } as any ));
+    const scrollElementDiv = wrapper.find('.scroll-element');
+    expect(bar.element.style.top).eq('90px');
+    expect(scrollElementDiv.element.style.top).eq(-(90 / 170 * 1300) + 'px');
 
-  //   document.dispatchEvent(new MouseEvent('mousemove', { clientY: -500 }));
-  //   wrapper.update();
-  //   bar = wrapper.find('.bar');
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(0);
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-0);
+    document.dispatchEvent(new MouseEvent('mousemove', { clientY: 500 }));
+    expect(bar.element.style.top).eq('170px');
+    expect(scrollElementDiv.element.style.top).eq(-1300 + 'px');
 
-  //   bar.simulate('mouseup');
+    document.dispatchEvent(new MouseEvent('mousemove', { clientY: -500 }));
+    expect(bar.element.style.top).eq('0px');
+    expect(scrollElementDiv.element.style.top).eq('0px');
 
-  //   document.dispatchEvent(new MouseEvent('mousemove', { clientY: 100 }));
-  //   wrapper.update();
-  //   bar = wrapper.find('.bar');
-  //   scrollElementDiv = wrapper.find('.scroll-element');
-  //   expect((bar.props().style as React.CSSProperties).top).toBe(0);
-  //   expect((scrollElementDiv.props().style as React.CSSProperties).top).toBe(-0);
+    bar.trigger('mouseup', { stopPropagation: () => {} });
+    document.dispatchEvent(new MouseEvent('mousemove', { clientY: 100 }));
+    expect(bar.element.style.top).eq('0px');
+    expect(scrollElementDiv.element.style.top).eq('0px');
 
-  // });
+  });
 });

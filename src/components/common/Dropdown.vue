@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-wrapper" :style="{width: width + 'px', display: display}" @mousedown="$event.stopPropagation()">
     <div class="value" @mouseup="triggleShowListData($event)">
-      {{ value }}
+      {{ currentValue }}
     </div>
     <span class="dropdown-btn" @mouseup="triggleShowListData($event)">
       <i class="icon-down" />
@@ -36,9 +36,9 @@ export default class Dropdown extends Vue {
   @Prop({ required: true }) public listData!: IListData[];
   @Prop({ default: true }) public globalClickClose!: boolean;
   @Prop({ default: '待选择' }) public placeholder!: string;
-  @Prop({ type: [ String, Number ], required: true }) public value!: string | number;
+  @Prop({ type: [ String, Number ], required: true }) public value!: string | number | null;
 
-  public currentValue: string | number = this.value || this.placeholder;
+  public currentValue: string | number = this.checkPropertyValid(this.value) ?  this.value as number | string : this.placeholder;
   public listVisible: boolean = false;
   public liHeight = 24;
 
@@ -69,7 +69,7 @@ export default class Dropdown extends Vue {
   }
 
   public selectValue(selectValue: IListData) {
-    this.currentValue = selectValue.value;
+    this.currentValue = this.checkPropertyValid(selectValue.value) ? selectValue.value : this.placeholder;
     this.listVisible = false;
     this.updateValue(selectValue.value);
   }
@@ -77,12 +77,16 @@ export default class Dropdown extends Vue {
   @Watch('value')
   public watchValue() {
     if (this.value !== this.currentValue) {
-      this.currentValue = this.value;
+      this.currentValue = this.checkPropertyValid(this.value) ? this.value as number | string : this.placeholder;
     }
   }
 
   @Emit('updateValue')
   public updateValue(value: string | number) {}
+
+  private checkPropertyValid(value: any): boolean {
+    return (typeof value === 'string' || typeof value === 'number') && value !== '';
+  }
 
 }
 

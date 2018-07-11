@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.0",
+    "@types/jsdom": "^11.0.6",
     "@types/mocha": "^2.2.46",
     "@types/sinon": "^5.0.1",
     "@vue/cli-plugin-babel": "^3.0.0-beta.15",

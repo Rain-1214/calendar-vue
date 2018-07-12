@@ -67,7 +67,7 @@ export default class CalendarDetailHeader extends Vue {
 
   public jump2prevMonth() {
     const { startYear, endYear } = this.lunarCalendarDataService.getScopeOfLunarYear();
-    if (this.currentYear === startYear && this.month === 1) {
+    if (this.currentYear === startYear && this.currentMonth === 1) {
       return;
     }
     if (this.currentMonth === 1) {
@@ -81,7 +81,7 @@ export default class CalendarDetailHeader extends Vue {
 
   public jump2nextMonth() {
     const { startYear, endYear } = this.lunarCalendarDataService.getScopeOfLunarYear();
-    if (this.currentYear === endYear && this.month === 12) {
+    if (this.currentYear === endYear && this.currentMonth === 12) {
       return;
     }
     if (this.currentMonth === 12) {

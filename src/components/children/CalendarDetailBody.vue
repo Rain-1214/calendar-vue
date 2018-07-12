@@ -204,6 +204,12 @@ export default class CalendarDetailBody extends Vue {
     }
   }
 
+  @Watch('schedules')
+  @Watch('showSchedule')
+  public reRenderTable() {
+    this.createTableData(this.currentYear, this.currentMonth);
+  }
+
   private getDateWeek(date: Date) {
     const week = date.getDay();
     return week === 0 ? 7 : week;

@@ -8,7 +8,7 @@ describe('Calendar Component Test', () => {
 
   let wrapper: Wrapper<Calendar>;
 
-  before(() => {
+  beforeEach(() => {
     wrapper = shallowMount(Calendar);
   });
 

@@ -28,7 +28,7 @@ describe('Schedule Component test', () => {
     },
   };
 
-  before(() => {
+  beforeEach(() => {
     wrapper = shallowMount(Schedule, {
       propsData: {
         ...props,
@@ -62,7 +62,7 @@ describe('Schedule Component test', () => {
     const fisrtDiv = headerDiv.at(0);
     expect(fisrtDiv.text().trim()).eq('2018-6-5 星期二');
     const secondDiv = headerDiv.at(1);
-    expect(secondDiv.hasClass('day')).eq(true);
+    expect(secondDiv.classes().includes('day')).eq(true);
     expect(secondDiv.text().trim()).eq('5');
     const thirdDiv = headerDiv.at(2);
     expect(thirdDiv.text().trim()).eq('戊戌年 狗年');
@@ -79,7 +79,6 @@ describe('Schedule Component test', () => {
 
   it('component show schedule list in ".list" div or show ".empty" li when schedule is empty', () => {
     const colorHextoRgb = (color: string) => {
-      const tempColor = color.slice(1);
       let red;
       let green;
       let blue;
@@ -103,7 +102,7 @@ describe('Schedule Component test', () => {
     const listUl = listDiv.find('ul');
     expect(listUl).have.property('element');
     const emptyLi = listUl.find('li');
-    expect(emptyLi.hasClass('empty')).eq(true);
+    expect(emptyLi.classes().includes('empty')).eq(true);
     expect(emptyLi.text().trim()).eq('暂无日程');
     const schedule: IScheduleList[] = [
       {
@@ -141,7 +140,7 @@ describe('Schedule Component test', () => {
       expect(timeDiv).have.property('element');
       expect(timeDiv.text().trim()).eq(`${tempScheduleList.startTime} - ${tempScheduleList.endTime}`);
       const iconI = e.find('i');
-      expect(iconI.hasClass('icon')).eq(true);
+      expect(iconI.classes().includes('icon')).eq(true);
       expect(iconI.element.style.backgroundColor).eq(colorHextoRgb(tempScheduleList.iconColor));
       const descriptionDiv = e.find('.description');
       expect(descriptionDiv).have.property('element');
